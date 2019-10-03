@@ -1,8 +1,10 @@
+// TODO: Terminate after time limit timeout: spawn on separate thread?
+
 package com.samsung.tester;
 
-import com.samsung.solutions.Plakatowanie;
-
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -12,18 +14,18 @@ public class Tester {
         System.out.println(name + "\n" + new String(new char[name.length()]).replace("\0", "-"));
         int correct = 0;
         int total = 0;
-        String path = "resources/" + name;
+        Path path = Paths.get("resources", name);
         int longestTestNameLength = 0;
-        for(String inputFile : Objects.requireNonNull((new File(path + "/in")).list()))
+        for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list()))
             longestTestNameLength = Math.max(longestTestNameLength, inputFile.length());
         longestTestNameLength -= ".in".length();
         long startTimeMs = System.currentTimeMillis();
-        for(String inputFile : Objects.requireNonNull((new File(path + "/in")).list())) {
+        for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list())) {
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
-            Scanner s = new Scanner(new File(path + "/limits/" + inputFile.replace(".in", ".limit")));
+            Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt();
             s.close();
-            correct += Test(f, testName, path + "/in/" + inputFile, path + "/out/" + inputFile.replace(".in", ".out"), timeLimitMs) ? 1 : 0;
+            correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs) ? 1 : 0;
             ++total;
         }
         long runTimeMs = System.currentTimeMillis() - startTimeMs;
@@ -31,12 +33,12 @@ public class Tester {
         System.out.println(new String(new char[summary.length()]).replace("\0", "-") + "\n" + summary + "\n");
     }
 
-    private static boolean Test(Consumer<String[]> f, String testName, String input, String output, long timeLimitMs) throws IOException {
+    private static boolean Test(Consumer<String[]> f, String testName, Path input, Path output, long timeLimitMs) throws IOException {
         PrintStream defaultSystemOut = System.out;
         InputStream defaultSystemIn = System.in;
 
         System.setIn(new InputStream() {
-            FileReader fileReader = new FileReader(input);
+            FileReader fileReader = new FileReader(input.toString());
             @Override
             public int read() throws IOException {
                 return fileReader.read();
@@ -54,7 +56,7 @@ public class Tester {
         System.setIn(defaultSystemIn);
 
         Scanner answer = new Scanner(byteArrayOutputStream.toString());
-        Scanner correct = new Scanner(new File(output));
+        Scanner correct = new Scanner(new File(output.toString()));
         boolean timeLimitExceeded = runTimeMs > timeLimitMs;
         boolean correctAnswer = true;
         while(answer.hasNext() && correct.hasNext()) {

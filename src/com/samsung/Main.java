@@ -11,6 +11,4 @@ public class Main {
         Tester.Test("Plakatowanie", Plakatowanie::main);
         Tester.Test("Krazki", Krazki::main);
     }
-
-
 }
