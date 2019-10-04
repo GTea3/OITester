@@ -23,7 +23,7 @@ public class Tester {
         for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list())) {
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
-            long timeLimitMs = s.nextInt();
+            long timeLimitMs = s.nextInt() * 2;
             s.close();
             correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs) ? 1 : 0;
             ++total;
