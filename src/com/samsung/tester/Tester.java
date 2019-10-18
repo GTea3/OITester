@@ -48,7 +48,7 @@ public class Tester {
         Test(name, f, false);
     }
 
-    public static void Test(String name, Consumer<String[]> f, Boolean verbose) throws IOException {
+    private static void Test(String name, Consumer<String[]> f, Boolean verbose) throws IOException {
         System.out.println(name + "\n" + new String(new char[name.length()]).replace("\0", "-"));
         int correct = 0;
         int total = 0;
