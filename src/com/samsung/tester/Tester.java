@@ -2,14 +2,49 @@
 
 package com.samsung.tester;
 
+import com.samsung.solutions.Krazki;
+import com.samsung.solutions.Lizak;
+import com.samsung.solutions.Plakatowanie;
+import com.samsung.solutions.Trojkaty;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 public class Tester {
+    public enum Tests {
+        All,
+        Plakatowanie,
+        Krazki,
+        Trojkaty,
+        Lizak
+    }
+
+    public static void Test(Tests test, Boolean verbose) throws IOException {
+        Map<Tests, Consumer<String[]>> tests = new TreeMap<Tests, Consumer<String[]>>() {
+            {
+                put(Tests.Plakatowanie, Plakatowanie::main);
+                put(Tests.Krazki, Krazki::main);
+                put(Tests.Trojkaty, Trojkaty::main);
+                put(Tests.Lizak, Lizak::main);
+            }
+        };
+
+        if(test == Tests.All) {
+            for (Map.Entry<Tests, Consumer<String[]>> entry : tests.entrySet()) {
+                Tester.Test(entry.getKey().name(), entry.getValue(), verbose);
+            }
+        }
+        else {
+            Tester.Test(test.name(), tests.get(test), verbose);
+        }
+    }
+
     public static void Test(String name, Consumer<String[]> f) throws IOException {
         Test(name, f, false);
     }
@@ -73,8 +108,11 @@ public class Tester {
                 break;
             }
         }
-        if(answer.hasNext() || correct.hasNext())
+        if(answer.hasNext() || correct.hasNext()) {
+            if(verbose)
+                System.out.println("\nIncorrect answer size.");
             correctAnswer = false;
+        }
 
         System.out.println(testName + ": " + (correctAnswer ? "OK" : "wrong answer") + " (" + runTimeMs + "/" + timeLimitMs + "ms)" + (timeLimitExceeded ? " [time limit exceeded]" : ""));
 

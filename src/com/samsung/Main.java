@@ -1,19 +1,17 @@
 package com.samsung;
 
 import com.samsung.tester.Tester;
-import com.samsung.solutions.Plakatowanie;
-import com.samsung.solutions.Krazki;
-import com.samsung.solutions.Trojkaty;
-import com.samsung.solutions.Lizak;
 
-import java.io.*;
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        // What tests do you want to run?
+        Tester.Tests test = Tester.Tests.All;
+
+        // Do you want to see first received token that did not match expected one?
         Boolean verbose = false;
-        Tester.Test("Plakatowanie", Plakatowanie::main, verbose);
-        Tester.Test("Krazki", Krazki::main, verbose);
-        Tester.Test("Trojkaty", Trojkaty::main, verbose);
-        Tester.Test("Lizak", Lizak::main, verbose);
+
+        Tester.Test(test, verbose);
     }
 }
