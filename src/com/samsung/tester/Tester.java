@@ -11,6 +11,10 @@ import java.util.function.Consumer;
 
 public class Tester {
     public static void Test(String name, Consumer<String[]> f) throws IOException {
+        Test(name, f, false);
+    }
+
+    public static void Test(String name, Consumer<String[]> f, Boolean verbose) throws IOException {
         System.out.println(name + "\n" + new String(new char[name.length()]).replace("\0", "-"));
         int correct = 0;
         int total = 0;
@@ -25,7 +29,7 @@ public class Tester {
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt() * 2;
             s.close();
-            correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs) ? 1 : 0;
+            correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs, verbose) ? 1 : 0;
             ++total;
         }
         long runTimeMs = System.currentTimeMillis() - startTimeMs;
@@ -33,7 +37,7 @@ public class Tester {
         System.out.println(new String(new char[summary.length()]).replace("\0", "-") + "\n" + summary + "\n");
     }
 
-    private static boolean Test(Consumer<String[]> f, String testName, Path input, Path output, long timeLimitMs) throws IOException {
+    private static boolean Test(Consumer<String[]> f, String testName, Path input, Path output, long timeLimitMs, Boolean verbose) throws IOException {
         PrintStream defaultSystemOut = System.out;
         InputStream defaultSystemIn = System.in;
 
@@ -60,7 +64,11 @@ public class Tester {
         boolean timeLimitExceeded = runTimeMs > timeLimitMs;
         boolean correctAnswer = true;
         while(answer.hasNext() && correct.hasNext()) {
-            if(answer.nextInt() != correct.nextInt()) {
+            var received = answer.next();
+            var expected = correct.next();
+            if(!received.equals(expected)) {
+                if(verbose)
+                    System.out.println("\nReceived: " + received + "\nExpected: " + expected);
                 correctAnswer = false;
                 break;
             }

@@ -10,9 +10,10 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Tester.Test("Plakatowanie", Plakatowanie::main);
-        Tester.Test("Krazki", Krazki::main);
-        Tester.Test("Trojkaty", Trojkaty::main);
-        Tester.Test("Lizak", Lizak::main);
+        Boolean verbose = false;
+        Tester.Test("Plakatowanie", Plakatowanie::main, verbose);
+        Tester.Test("Krazki", Krazki::main, verbose);
+        Tester.Test("Trojkaty", Trojkaty::main, verbose);
+        Tester.Test("Lizak", Lizak::main, verbose);
     }
 }
