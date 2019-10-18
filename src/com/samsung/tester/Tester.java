@@ -2,10 +2,7 @@
 
 package com.samsung.tester;
 
-import com.samsung.solutions.Krazki;
-import com.samsung.solutions.Lizak;
-import com.samsung.solutions.Plakatowanie;
-import com.samsung.solutions.Trojkaty;
+import com.samsung.solutions.*;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -22,7 +19,8 @@ public class Tester {
         Plakatowanie,
         Krazki,
         Trojkaty,
-        Lizak
+        Lizak,
+        Rezerwacja
     }
 
     public static void Test(Tests test, Boolean verbose) throws IOException {
@@ -32,6 +30,7 @@ public class Tester {
                 put(Tests.Krazki, Krazki::main);
                 put(Tests.Trojkaty, Trojkaty::main);
                 put(Tests.Lizak, Lizak::main);
+                put(Tests.Rezerwacja, Rezerwacja::main);
             }
         };
 
