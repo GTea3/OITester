@@ -9,24 +9,56 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Tester {
     public enum Tests {
+        // Wszystkie
         All,
+
+        // Rozgrzewka
         Lizak,
         //Minusy,
         Trojkaty,
         //Antypierwsze,
+
+        // Koszt zamortyzowany
         Krazki,
         //Browar,
+
+        // Stos
         Plakatowanie,
         //Tetris,
-        Rezerwacja
+
+        // Przeszukiwanie grafow
+        //Rownanie,
+        //Jedynki,
+        //Agenci,
+
+        // Algorytmy zachlanne
+        //Szeregowanie,
+        //Rozklad,
+
+        // Programowanie dynamiczne I
+        Rezerwacja,
+        //Roznica,
+        //Zajakniecia,
+
+        // Drzewa
+        //Dostawca,
+        //Luk,
+        //Wielokat,
+
+        // Algorytmy grafowe I
+        //Odleglosc,
+        //Zawody,
+        //Dziuple,
+        //Zabka,
+    }
+
+    private enum CustomValidators {
+        Minusy,
     }
 
     public static void Test(Tests test, Boolean verbose) throws IOException {
@@ -82,7 +114,10 @@ public class Tester {
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt() * 2;
             s.close();
-            correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs, verbose) ? 1 : 0;
+            if(IsCustomValidated(name))
+                correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), name, timeLimitMs, verbose) ? 1 : 0;
+            else
+                correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs, verbose) ? 1 : 0;
             ++total;
         }
         long runTimeMs = System.currentTimeMillis() - startTimeMs;
@@ -90,7 +125,17 @@ public class Tester {
         System.out.println(new String(new char[summary.length()]).replace("\0", "-") + "\n" + summary + "\n");
     }
 
-    private static boolean Test(Consumer<String[]> f, String testName, Path input, Path output, long timeLimitMs, Boolean verbose) throws IOException {
+    private static boolean IsCustomValidated(String name) {
+        boolean isCustomValidated = true;
+        try {
+            CustomValidators.valueOf(name);
+        } catch (Exception e) {
+            isCustomValidated = false;
+        }
+        return isCustomValidated;
+    }
+
+    private static List<Object> TestConsumer(Consumer<String[]> f, Path input)  throws IOException {
         PrintStream defaultSystemOut = System.out;
         InputStream defaultSystemIn = System.in;
 
@@ -112,9 +157,44 @@ public class Tester {
         System.setOut(defaultSystemOut);
         System.setIn(defaultSystemIn);
 
+        return new ArrayList<Object>() {
+            {
+                add(byteArrayOutputStream);
+                add(runTimeMs);
+            }
+        };
+    }
+
+    // validate answer with custom validator
+    private static boolean Test(Consumer<String[]> f, String testName, Path input, String name, long timeLimitMs, Boolean verbose) throws IOException {
+        List<Object> results = TestConsumer(f, input);
+        ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) results.get(0);
+        long runTimeMs = (long) results.get(1);
+
+        boolean timeLimitExceeded = runTimeMs > timeLimitMs;
+        Scanner answer = new Scanner(byteArrayOutputStream.toString());
+        Scanner inputContents = new Scanner(new File(input.toString()));
+        boolean correctAnswer = false;
+        try {
+            correctAnswer = (Boolean) Class.forName("com.samsung.validators." + name).getMethod("validate", Scanner.class, Scanner.class).invoke(null, (Object) answer, (Object) inputContents);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(testName + ": " + (correctAnswer ? "OK" : "wrong answer") + " (" + runTimeMs + "/" + timeLimitMs + "ms)" + (timeLimitExceeded ? " [time limit exceeded]" : ""));
+
+        return correctAnswer && !timeLimitExceeded;
+    }
+
+    // check against correct answer in output file
+    private static boolean Test(Consumer<String[]> f, String testName, Path input, Path output, long timeLimitMs, Boolean verbose) throws IOException {
+        List<Object> results = TestConsumer(f, input);
+        ByteArrayOutputStream byteArrayOutputStream = (ByteArrayOutputStream) results.get(0);
+        long runTimeMs = (long) results.get(1);
+
+        boolean timeLimitExceeded = runTimeMs > timeLimitMs;
         Scanner answer = new Scanner(byteArrayOutputStream.toString());
         Scanner correct = new Scanner(new File(output.toString()));
-        boolean timeLimitExceeded = runTimeMs > timeLimitMs;
         boolean correctAnswer = true;
         while(answer.hasNext() && correct.hasNext()) {
             var received = answer.next();
