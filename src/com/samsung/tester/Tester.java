@@ -3,6 +3,7 @@
 package com.samsung.tester;
 
 import com.samsung.solutions.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -58,6 +59,7 @@ public class Tester {
     }
 
     private enum CustomValidators {
+        Lizak,
         Minusy,
     }
 
@@ -110,6 +112,8 @@ public class Tester {
         longestTestNameLength -= ".in".length();
         long startTimeMs = System.currentTimeMillis();
         for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list())) {
+            if(!inputFile.equals("liz1a.in"))
+                continue;
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt() * 2;
@@ -126,13 +130,12 @@ public class Tester {
     }
 
     private static boolean IsCustomValidated(String name) {
-        boolean isCustomValidated = true;
         try {
-            CustomValidators.valueOf(name);
+            Class.forName("com.samsung.validators." + name);
+            return true;
         } catch (Exception e) {
-            isCustomValidated = false;
+            return false;
         }
-        return isCustomValidated;
     }
 
     private static List<Object> TestConsumer(Consumer<String[]> f, Path input)  throws IOException {
@@ -176,7 +179,7 @@ public class Tester {
         Scanner inputContents = new Scanner(new File(input.toString()));
         boolean correctAnswer = false;
         try {
-            correctAnswer = (Boolean) Class.forName("com.samsung.validators." + name).getMethod("validate", Scanner.class, Scanner.class).invoke(null, (Object) answer, (Object) inputContents);
+            correctAnswer = (Boolean) Class.forName("com.samsung.validators." + name).getMethod("validate", Scanner.class, Scanner.class, boolean.class).invoke(null, answer, inputContents, verbose);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }
