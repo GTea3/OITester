@@ -7,6 +7,7 @@ public class Lizak {
         int n = input.nextInt();
         int m = input.nextInt();
         String s = input.next(".*(T|W)+");
+        solve(n, s);
         int[] a = new int[n + 1];
         a[0] = 0;
         for(int i = 0; i < n; ++i)
@@ -52,15 +53,15 @@ public class Lizak {
 
     private static int[] lollipop = new int[N];
     private static int[][] range = new int[2 * N + 1][2];
-    private static int sum = 0;
+    private static int sum;
 
     private static void computeRanges(int left, int right, int sum) {
+        // save ranges for current sum
+        range[sum][0] = left;
+        range[sum][1] = right;
+
         // compute subranges
         while(sum >= 3) {
-            // save ranges for current sum
-            range[sum][0] = left;
-            range[sum][1] = right;
-
             // compute subranges
             if(lollipop[left] == 2) {
                 left = left + 1;
@@ -73,16 +74,17 @@ public class Lizak {
                 right = right - 1;
             }
             sum = sum - 2;
-        }
 
-        // save ranges for current sum
-        range[sum][0] = left;
-        range[sum][1] = right;
+            // save ranges for current sum
+            range[sum][0] = left;
+            range[sum][1] = right;
+        }
     }
 
     private static void solve(int n, String s) {
         // read input, put segment costs into lollipop array
         // and compute sum of values of all segments
+        sum = 0;
         for(int i = 0; i < n; ++i) {
             char a = s.charAt(i);
             lollipop[i] = a == 'W' ? 1 : 2;
