@@ -16,7 +16,7 @@ public class Tester {
 
         // Rozgrzewka
         //Lizak, // implemented, not yet available
-        //Minusy, // not implemented
+        Minusy, // not implemented
         Trojkaty,
         //Antypierwsze, // not implemented
 
