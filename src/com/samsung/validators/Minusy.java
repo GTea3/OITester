@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Minusy {
     public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
-        int n = input.nextInt();
+        // TODO: Implement
         return false;
     }
 }

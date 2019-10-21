@@ -15,54 +15,54 @@ public class Tester {
         All,
 
         // Rozgrzewka
-        Lizak,
-        //Minusy,
+        //Lizak, // implemented, not yet available
+        //Minusy, // not implemented
         Trojkaty,
-        //Antypierwsze,
+        //Antypierwsze, // not implemented
 
         // Koszt zamortyzowany
         Krazki,
-        //Browar,
+        //Browar, // not implemented
 
         // Stos
         Plakatowanie,
-        //Tetris,
+        //Tetris, // not implemented
 
         // Przeszukiwanie grafow
-        //Rownanie,
-        //Jedynki,
-        //Agenci,
+        //Rownanie, // not implemented
+        //Jedynki, // not implemented
+        //Agenci, // not implemented
 
         // Algorytmy zachlanne
-        //Szeregowanie,
-        //Rozklad,
+        //Szeregowanie, // not implemented
+        //Rozklad, // not implemented
 
         // Programowanie dynamiczne I
-        Rezerwacja,
-        //Roznica,
-        //Zajakniecia,
+        //Rezerwacja, // not yet available
+        //Roznica, // not implemented
+        //Zajakniecia, // not implemented
 
         // Drzewa
-        //Dostawca,
-        //Luk,
-        //Wielokat,
+        //Dostawca, // not implemented
+        //Luk, // not implemented
+        //Wielokat, // not implemented
 
         // Algorytmy grafowe I
-        //Odleglosc,
-        //Zawody,
-        //Dziuple,
-        //Zabka,
+        //Odleglosc, // not implemented
+        //Zawody, // not implemented
+        //Dziuple, // not implemented
+        //Zabka, // not implemented
     }
 
-    public static void Test(Tests test, Boolean verbose) throws IOException {
+    public static void Test(Tests test, Boolean verbose, Boolean stopOnFirstFail) throws IOException {
         Map<Tests, Consumer<String[]>> tests = GetTests();
         if(test == Tests.All) {
             for (Map.Entry<Tests, Consumer<String[]>> entry : tests.entrySet()) {
-                Tester.Test(entry.getKey().name(), entry.getValue(), verbose);
+                Tester.Test(entry.getKey().name(), entry.getValue(), verbose, stopOnFirstFail);
             }
         }
         else {
-            Tester.Test(test.name(), tests.get(test), verbose);
+            Tester.Test(test.name(), tests.get(test), verbose, stopOnFirstFail);
         }
     }
 
@@ -89,20 +89,35 @@ public class Tester {
     }
 
     public static void Test(String name, Consumer<String[]> f) throws IOException {
-        Test(name, f, false);
+        Test(name, f, false, true);
     }
 
-    private static void Test(String name, Consumer<String[]> f, Boolean verbose) throws IOException {
+    private static void Test(String name, Consumer<String[]> f, Boolean verbose, Boolean stopOnFirstFail) throws IOException {
         System.out.println(name + "\n" + new String(new char[name.length()]).replace("\0", "-"));
         int correct = 0;
         int total = 0;
         Path path = Paths.get("resources", name);
         int longestTestNameLength = 0;
-        for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list()))
+        String[] inputFiles1 = Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list());
+        List<String> inputFiles = Arrays.asList(inputFiles1);
+        Collections.sort(inputFiles, new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                int o1int = extractInt(o1);
+                int o2int = extractInt(o2);
+                if(o1int != o2int)
+                    return extractInt(o1) - extractInt(o2);
+                return o1.compareTo(o2);
+            }
+            int extractInt(String s) {
+                String num = s.replaceAll("\\D", "");
+                return num.isEmpty() ? 0 : Integer.parseInt(num); // return 0 if no digits found
+            }
+        });
+        for(String inputFile : inputFiles)
             longestTestNameLength = Math.max(longestTestNameLength, inputFile.length());
         longestTestNameLength -= ".in".length();
         long startTimeMs = System.currentTimeMillis();
-        for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list())) {
+        for(String inputFile : inputFiles) {
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt() * 2;
@@ -112,10 +127,13 @@ public class Tester {
             else
                 correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), Paths.get(path.toString(), "out", inputFile.replace(".in", ".out")), timeLimitMs, verbose) ? 1 : 0;
             ++total;
+            if(stopOnFirstFail && correct < total)
+                break;
         }
         long runTimeMs = System.currentTimeMillis() - startTimeMs;
-        String summary = correct + "/" + total + " tests passed (total " +  runTimeMs + "ms)";
-        System.out.println(new String(new char[summary.length()]).replace("\0", "-") + "\n" + summary + "\n");
+        String summary = correct + "/" + total + " tests passed (total " +  runTimeMs + "ms)" + (stopOnFirstFail && correct < total ? (", executed " + total + "/" + inputFiles.size() + " tests before first fail") : "");
+        System.out.println(new String(new char[summary.length()]).replace("\0", "-"));
+        System.out.println(summary + "\n");
     }
 
     private static boolean IsCustomValidated(String name) {
