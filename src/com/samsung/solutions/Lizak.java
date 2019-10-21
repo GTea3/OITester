@@ -2,6 +2,7 @@ package com.samsung.solutions;
 
 import java.util.Scanner;
 
+// https://szkopul.edu.pl/problemset/problem/AWhdD7i4V7mupdKWVtpgfGSM/site/
 public class Lizak {
     private static int N = 1000000;
     private static int NIL = -1;
@@ -9,7 +10,7 @@ public class Lizak {
     private static int[] lollipop = new int[N];
     private static int[][] range = new int[2 * N + 1][2];
 
-    private static void computeRanges(int left, int right, int sum) {
+    private static void computeRangesRecursive(int left, int right, int sum) { // causes stack overflow in JVM for large cases
 
         // save ranges for current sum
         range[sum][0] = left;
@@ -24,6 +25,34 @@ public class Lizak {
             else
                 computeRanges(left + 1, right - 1, sum - 2);
         }
+    }
+
+    private static void computeRanges(int left, int right, int sum) {
+
+        // compute subranges
+        while(sum >= 3) {
+
+            // save ranges for current sum
+            range[sum][0] = left;
+            range[sum][1] = right;
+
+            // compute subranges
+            if(lollipop[left] == 2) {
+                left = left + 1;
+            }
+            else if(lollipop[right] == 2) {
+                right = right - 1;
+            }
+            else {
+                left = left + 1;
+                right = right - 1;
+            }
+            sum = sum - 2;
+        }
+
+        // save ranges for current sum
+        range[sum][0] = left;
+        range[sum][1] = right;
     }
 
     public static void main(String[] args) {

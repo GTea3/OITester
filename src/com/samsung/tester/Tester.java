@@ -2,12 +2,8 @@
 
 package com.samsung.tester;
 
-import com.samsung.solutions.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -56,11 +52,6 @@ public class Tester {
         //Zawody,
         //Dziuple,
         //Zabka,
-    }
-
-    private enum CustomValidators {
-        Lizak,
-        Minusy,
     }
 
     public static void Test(Tests test, Boolean verbose) throws IOException {
@@ -112,8 +103,6 @@ public class Tester {
         longestTestNameLength -= ".in".length();
         long startTimeMs = System.currentTimeMillis();
         for(String inputFile : Objects.requireNonNull((new File(Paths.get(path.toString(),"in").toString())).list())) {
-            if(!inputFile.equals("liz1a.in"))
-                continue;
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
             long timeLimitMs = s.nextInt() * 2;
