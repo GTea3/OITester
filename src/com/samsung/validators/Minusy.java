@@ -3,66 +3,219 @@ package com.samsung.validators;
 import java.util.Scanner;
 
 public class Minusy {
-    private static boolean check(char requestedSign, char currentSign, char externalSign, boolean verbose) {
-        char compoundSign = externalSign == currentSign ? currentSign : '-';
-        if(requestedSign != compoundSign) {
-            if (verbose)
-                System.out.println("Expected " + (requestedSign == '+' ? "positive" : "negative") + " variable, got " + (compoundSign == '+' ? "positive" : "negative") + ".");
-            return false;
-        }
-        return true;
+
+    private static boolean debug = false; // TODO: remove
+
+    private enum State {
+        Start,
+        Minus,
+        Closing,
+        Opening,
+        End
     }
 
-    private static char flip(char sign) {
-        return sign == '-' ? '+' : '-';
-    }
-
-    public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
-        verbose = true;
-        int n = input.nextInt();
-        String s = answer.next();
-        int variablesProcessed = 0;
+    private static class Context {
+        Scanner answer;
+        Scanner input;
+        State state;
+        String s;
+        int n;
+        int i;
+        boolean verbose;
+        int variablesProcessed;
+        int parenthesesLevel;
         char requestedSign = '+'; // first variable is positive
         char externalSign = '+'; // sign applied to current partial expression inside current parentheses (or whole expression when not in any parentheses)
         char internalSign = '+'; // current sign applicable to next virtual token; expression begins with a variable without any sign, so it's positive
-        int parenthesesLevel = 0;
-        for(int i = 0; i < s.length(); ++i) {
-            System.out.println(s.charAt(i));
-            if(s.charAt(i) == '(') {
-                // TODO: parentheses cannot be opened right after one's been closed
-                externalSign = flip(externalSign);
-                internalSign = '+';
-                ++parenthesesLevel;
-            }
-            else if(s.charAt(i) == ')') {
-                if(!check(requestedSign, internalSign, externalSign, verbose))
-                    return false;
-                requestedSign = input.next("[+-]\\n?").charAt(0);
-                internalSign = externalSign;
-                externalSign = flip(externalSign);
-                if(--parenthesesLevel < 0) {
-                    if(verbose)
-                        System.out.println("Parentheses not matching correctly.");
-                    return false;
-                }
-            }
-            else if(s.charAt(i) == '-') {
-                if(!check(requestedSign, internalSign, externalSign, verbose))
-                    return false;
-                requestedSign = input.next("[+-]\\n?").charAt(0);
-                internalSign = '-';
-            }
-            else {
-                if(verbose)
-                    System.out.println("Invalid character: '" + s.charAt(i) + "'");
-                return false;
+
+        public Context(Scanner answer, Scanner input, boolean verbose) {
+            this.verbose = true;
+            this.answer = answer;
+            this.input = input;
+            this.state = State.Start;
+            this.n = input.nextInt();
+            this.s = answer.next();
+            this.i = 0;
+            this.variablesProcessed = 0;
+            this.parenthesesLevel = 0;
+            this.externalSign = '+';
+            this.internalSign = '+';
+            if(debug) System.out.println(s);
+        }
+
+        public char nextRequested() {
+            this.requestedSign = input.next("[+-]\\n?").charAt(0);
+            return  requestedSign;
+        }
+    }
+
+    public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
+        Context context = new Context(answer, input, verbose);
+        while(true) {
+            switch (context.state) {
+                case Start:
+                    if(!Start(context))
+                        return false;
+                    break;
+                case Minus:
+                    if(!Minus(context))
+                        return false;
+                    break;
+                case Opening:
+                    if(!Opening(context))
+                        return false;
+                    break;
+                case Closing:
+                    if(!Closing(context))
+                        return false;
+                    break;
+                case End:
+                    return End(context);
             }
         }
-        if(variablesProcessed != n - 1) {
-            if(verbose)
+    }
+
+    private static boolean Start(Context context) {
+        if(debug) System.out.println("Start");
+        if(context.i >= context.s.length()) {
+            if(context.verbose)
+                System.out.println("Invalid state transition.");
+            return false;
+        }
+        switch (context.s.charAt(context.i)) {
+            case '-':
+                // TODO: implement missing logic
+                if(debug) System.out.println("->Minus");
+                context.state = State.Minus;
+                break;
+            case '(':
+                // TODO: implement missing logic
+                ++context.parenthesesLevel;
+                if(debug) System.out.println("->Opening");
+                context.state = State.Opening;
+                break;
+            default:
+                if(context.verbose)
+                    System.out.println("Invalid state transition.");
+                return false;
+        }
+        ++context.i;
+        return true;
+    }
+
+    private static boolean Minus(Context context) {
+        if(debug) System.out.println("Minus");
+        if(context.i >= context.s.length()) {
+            context.state = State.End;
+            return true;
+        }
+        switch (context.s.charAt(context.i)) {
+            case '-':
+                // TODO: implement missing logic
+                if(debug) System.out.println("->Minus");
+                break;
+            case '(':
+                // TODO: implement missing logic
+                ++context.parenthesesLevel;
+                if(debug) System.out.println("->Opening");
+                context.state = State.Opening;
+                break;
+            case ')':
+                // TODO: implement missing logic
+                if(context.parenthesesLevel <= 0) {
+                    if (context.verbose)
+                        System.out.println("Parentheses closed incorrectly.");
+                    return false;
+                }
+                --context.parenthesesLevel;
+                if(debug) System.out.println("->Closing");
+                context.state = State.Closing;
+                break;
+            default:
+                if(context.verbose)
+                    System.out.println("Invalid state transition.");
+                return false;
+        }
+        ++context.i;
+        return true;
+    }
+
+    private static boolean Opening(Context context) {
+        if(debug) System.out.println("Opening");
+        if(context.i >= context.s.length()) {
+            if(context.verbose)
+                System.out.println("Invalid state transition.");
+            return false;
+        }
+        switch (context.s.charAt(context.i)) {
+            case '-':
+                // TODO: implement missing logic
+                if(debug) System.out.println("->Minus");
+                context.state = State.Minus;
+                break;
+            case '(':
+                // TODO: implement missing logic
+                if(debug) System.out.println("->Opening");
+                ++context.parenthesesLevel;
+                break;
+            default:
+                if(context.verbose)
+                    System.out.println("Invalid state transition.");
+                return false;
+        }
+        ++context.i;
+        return true;
+    }
+
+    private static boolean Closing(Context context) {
+        if(debug) System.out.println("Closing");
+        if(context.i >= context.s.length()) {
+            context.state = State.End;
+            return true;
+        }
+        switch (context.s.charAt(context.i)) {
+            case '-':
+                // TODO: implement missing logic
+                if(debug) System.out.println("->Minus");
+                context.state = State.Minus;
+                break;
+            case ')':
+                // TODO: implement missing logic
+                if(context.parenthesesLevel <= 0) {
+                    if (context.verbose)
+                        System.out.println("Parentheses closed incorrectly.");
+                    return false;
+                }
+                --context.parenthesesLevel;
+                if(debug) System.out.println("->Closing");
+                break;
+            default:
+                if(context.verbose)
+                    System.out.println("Invalid state transition.");
+                return false;
+        }
+        ++context.i;
+        return true;
+    }
+
+    private static boolean End(Context context) {
+        if(debug) System.out.println("End");
+        // TODO: Anything else to do here?
+
+        context.variablesProcessed = context.n; // TODO: remove this
+        if(debug) System.out.println("pLvl=" + context.parenthesesLevel);
+
+        if(context.parenthesesLevel != 0) {
+            if (context.verbose)
+                System.out.println("Parentheses not closed correctly.");
+            return false;
+        }
+        if(context.n != context.variablesProcessed) {
+            if (context.verbose)
                 System.out.println("Not all variables had been taken into account.");
             return false;
         }
+        ++context.i;
         return true;
     }
 }
