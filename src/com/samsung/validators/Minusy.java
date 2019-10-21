@@ -1,10 +1,11 @@
 package com.samsung.validators;
 
 import java.util.Scanner;
+import java.util.Stack;
 
 public class Minusy {
 
-    private static boolean debug = false; // TODO: remove
+    private static boolean debug = true; // TODO: remove
 
     private enum State {
         Start,
@@ -24,9 +25,9 @@ public class Minusy {
         boolean verbose;
         int variablesProcessed;
         int parenthesesLevel;
-        char requestedSign = '+'; // first variable is positive
-        char externalSign = '+'; // sign applied to current partial expression inside current parentheses (or whole expression when not in any parentheses)
-        char internalSign = '+'; // current sign applicable to next virtual token; expression begins with a variable without any sign, so it's positive
+        char requestedSign;
+        char currentSign;
+        Stack<Character> signStack;
 
         public Context(Scanner answer, Scanner input, boolean verbose) {
             this.verbose = true;
@@ -38,8 +39,9 @@ public class Minusy {
             this.i = 0;
             this.variablesProcessed = 0;
             this.parenthesesLevel = 0;
-            this.externalSign = '+';
-            this.internalSign = '+';
+            this.requestedSign = '+'; // first variable is positive
+            this.currentSign = '+';
+            this.signStack = new Stack<Character>();
             if(debug) System.out.println(s);
         }
 
@@ -47,6 +49,13 @@ public class Minusy {
             this.requestedSign = input.next("[+-]\\n?").charAt(0);
             return  requestedSign;
         }
+
+        public char GetCombinedSign() {
+            if(signStack.empty())
+                return currentSign;
+            return currentSign == signStack.peek() ? currentSign : (currentSign == '-' ? '+' : '-');
+        }
+
     }
 
     public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
@@ -85,10 +94,19 @@ public class Minusy {
         switch (context.s.charAt(context.i)) {
             case '-':
                 // TODO: implement missing logic
+                if(context.requestedSign != context.GetCombinedSign()) {
+                    if(context.verbose)
+                        System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
+                    return false;
+                }
+                context.currentSign = '-';
                 if(debug) System.out.println("->Minus");
                 context.state = State.Minus;
                 break;
             case '(':
+                // TODO: implement missing logic
+                context.signStack.push(context.GetCombinedSign());
+                context.currentSign = '+';
                 // TODO: implement missing logic
                 ++context.parenthesesLevel;
                 if(debug) System.out.println("->Opening");
@@ -112,9 +130,18 @@ public class Minusy {
         switch (context.s.charAt(context.i)) {
             case '-':
                 // TODO: implement missing logic
+                if(context.requestedSign != context.GetCombinedSign()) {
+                    if(context.verbose)
+                        System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
+                    return false;
+                }
+                context.currentSign = '-';
                 if(debug) System.out.println("->Minus");
                 break;
             case '(':
+                // TODO: implement missing logic
+                context.signStack.push(context.GetCombinedSign());
+                context.currentSign = '+';
                 // TODO: implement missing logic
                 ++context.parenthesesLevel;
                 if(debug) System.out.println("->Opening");
@@ -127,6 +154,12 @@ public class Minusy {
                         System.out.println("Parentheses closed incorrectly.");
                     return false;
                 }
+                if(context.requestedSign != context.GetCombinedSign()) {
+                    if(context.verbose)
+                        System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
+                    return false;
+                }
+                context.currentSign = context.signStack.pop();
                 --context.parenthesesLevel;
                 if(debug) System.out.println("->Closing");
                 context.state = State.Closing;
@@ -149,11 +182,20 @@ public class Minusy {
         }
         switch (context.s.charAt(context.i)) {
             case '-':
+                if(context.requestedSign != context.GetCombinedSign()) {
+                    if(context.verbose)
+                        System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
+                    return false;
+                }
+                context.currentSign = '-';
                 // TODO: implement missing logic
                 if(debug) System.out.println("->Minus");
                 context.state = State.Minus;
                 break;
             case '(':
+                // TODO: implement missing logic
+                context.signStack.push(context.GetCombinedSign());
+                context.currentSign = '+';
                 // TODO: implement missing logic
                 if(debug) System.out.println("->Opening");
                 ++context.parenthesesLevel;
@@ -175,6 +217,7 @@ public class Minusy {
         }
         switch (context.s.charAt(context.i)) {
             case '-':
+                context.currentSign = '-';
                 // TODO: implement missing logic
                 if(debug) System.out.println("->Minus");
                 context.state = State.Minus;
@@ -186,6 +229,7 @@ public class Minusy {
                         System.out.println("Parentheses closed incorrectly.");
                     return false;
                 }
+                context.currentSign = context.signStack.pop();
                 --context.parenthesesLevel;
                 if(debug) System.out.println("->Closing");
                 break;
@@ -200,7 +244,6 @@ public class Minusy {
 
     private static boolean End(Context context) {
         if(debug) System.out.println("End");
-        // TODO: Anything else to do here?
 
         context.variablesProcessed = context.n; // TODO: remove this
         if(debug) System.out.println("pLvl=" + context.parenthesesLevel);
