@@ -18,7 +18,7 @@ public class Tester {
         //Lizak, // implemented, not yet available
         //Minusy, // implemented, not yet available
         Trojkaty,
-        //Antypierwsze, // not implemented
+        Antypierwsze, // not implemented
 
         // Koszt zamortyzowany
         Krazki,
