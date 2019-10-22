@@ -20,7 +20,7 @@ public class Lizak {
                 int rangeValue = a[r] - a[l - 1];
                 if(rangeValue != query) {
                     if(verbose)
-                        System.out.println("Sum for range (" + l + ", " + r + ") is equal " + rangeValue + ", not " + query + ".");
+                        System.out.println("\nSum for range (" + l + ", " + r + ") is equal " + rangeValue + ", not " + query + ".");
                     return false;
                 }
                 if(answer.hasNextLine()) // get rid of '\n'
@@ -29,18 +29,18 @@ public class Lizak {
             else {
                 if(!answer.hasNextLine()) {
                     if(verbose)
-                        System.out.println("Not enough query results.");
+                        System.out.println("\nNot enough query results.");
                     return false;
                 }
                 var ss = answer.nextLine();
                 if(!ss.equals("NIE")) {
                     if(verbose)
-                        System.out.println("Unrecognized answer: \"" + ss + "\"");
+                        System.out.println("\nUnrecognized answer: \"" + ss + "\"");
                     return false;
                 }
                 if (query <= sum && range[query][0] != NIL) {
                     if(verbose)
-                        System.out.println("Returned \"NIE\" for query with existing answer.");
+                        System.out.println("\nReturned \"NIE\" for query with existing answer.");
                     return false;
                 }
             }

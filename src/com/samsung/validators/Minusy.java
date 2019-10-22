@@ -6,8 +6,6 @@ import java.util.Stack;
 
 public class Minusy {
 
-    private static boolean debug = false; // TODO: remove
-
     private enum State {
         Start,
         Minus,
@@ -30,12 +28,17 @@ public class Minusy {
         char currentSign;
         Stack<Character> signStack;
 
-        public Context(Scanner answer, Scanner input, boolean verbose) {
+        public Context(Scanner answer, Scanner input, boolean verbose) throws Exception {
             this.verbose = true;
             this.answer = answer;
             this.input = input;
             this.state = State.Start;
             this.n = input.nextInt();
+            if(!answer.hasNext()) {
+                if(verbose)
+                    System.out.println("\nNo answer provided.");
+                throw new Exception();
+            }
             this.s = answer.next();
             this.i = 0;
             this.variablesProcessed = 0;
@@ -43,7 +46,6 @@ public class Minusy {
             this.requestedSign = '+'; // first variable is positive
             this.currentSign = '+';
             this.signStack = new Stack<Character>();
-            if(debug) System.out.println(s);
         }
 
         public void nextRequested() {
@@ -64,7 +66,12 @@ public class Minusy {
     }
 
     public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
-        Context context = new Context(answer, input, verbose);
+        Context context = null;
+        try {
+            context = new Context(answer, input, verbose);
+        } catch (Exception e) {
+            return false;
+        }
         while(true) {
             switch (context.state) {
                 case Start:
@@ -92,24 +99,22 @@ public class Minusy {
     private static boolean VerifyRequest(Context context) {
         if(context.variablesProcessed >= context.n) {
             if(context.verbose)
-                System.out.println("Provided expression contains more implicit variables than expected.");
+                System.out.println("\nProvided expression contains more implicit variables than expected.");
             return false;
         }
         if(context.requestedSign != context.GetCombinedSign()) {
             if(context.verbose)
-                System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
+                System.out.println("\nExpected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
             return false;
         }
-        if(debug) System.out.println("Expected " + (context.requestedSign == '-' ? "negative" : "positive") + " variable, got " + (context.GetCombinedSign() == '-' ? "negative" : "positive") + ".");
         context.nextRequested();
         return true;
     }
 
     private static boolean Start(Context context) {
-        if(debug) System.out.println("Start");
         if(context.i >= context.s.length()) {
             if(context.verbose)
-                System.out.println("Invalid state transition.");
+                System.out.println("\nInvalid state transition.");
             return false;
         }
         switch (context.s.charAt(context.i)) {
@@ -118,18 +123,16 @@ public class Minusy {
                     return false;
                 context.currentSign = '-';
                 context.state = State.Minus;
-                if(debug) System.out.println("->Minus");
                 break;
             case '(':
                 context.signStack.push(context.GetCombinedSign());
                 context.currentSign = '+';
                 ++context.parenthesesLevel;
                 context.state = State.Opening;
-                if(debug) System.out.println("->Opening");
                 break;
             default:
                 if(context.verbose)
-                    System.out.println("Invalid state transition.");
+                    System.out.println("\nInvalid state transition.");
                 return false;
         }
         ++context.i;
@@ -137,12 +140,10 @@ public class Minusy {
     }
 
     private static boolean Minus(Context context) {
-        if(debug) System.out.println("Minus");
         if(context.i >= context.s.length()) {
             if(!VerifyRequest(context))
                 return false;
             context.state = State.End;
-            if(debug) System.out.println("->End");
             return true;
         }
         switch (context.s.charAt(context.i)) {
@@ -150,19 +151,17 @@ public class Minusy {
                 if(!VerifyRequest(context))
                     return false;
                 context.currentSign = '-';
-                if(debug) System.out.println("->Minus");
                 break;
             case '(':
                 context.signStack.push(context.GetCombinedSign());
                 context.currentSign = '+';
                 ++context.parenthesesLevel;
                 context.state = State.Opening;
-                if(debug) System.out.println("->Opening");
                 break;
             case ')':
                 if(context.parenthesesLevel <= 0) {
                     if (context.verbose)
-                        System.out.println("Parentheses closed incorrectly.");
+                        System.out.println("\nParentheses closed incorrectly.");
                     return false;
                 }
                 if(!VerifyRequest(context))
@@ -170,11 +169,10 @@ public class Minusy {
                 context.currentSign = context.signStack.pop();
                 --context.parenthesesLevel;
                 context.state = State.Closing;
-                if(debug) System.out.println("->Closing");
                 break;
             default:
                 if(context.verbose)
-                    System.out.println("Invalid state transition.");
+                    System.out.println("\nInvalid state transition.");
                 return false;
         }
         ++context.i;
@@ -182,10 +180,9 @@ public class Minusy {
     }
 
     private static boolean Opening(Context context) {
-        if(debug) System.out.println("Opening");
         if(context.i >= context.s.length()) {
             if(context.verbose)
-                System.out.println("Invalid state transition.");
+                System.out.println("\nInvalid state transition.");
             return false;
         }
         switch (context.s.charAt(context.i)) {
@@ -194,17 +191,15 @@ public class Minusy {
                     return false;
                 context.currentSign = '-';
                 context.state = State.Minus;
-                if(debug) System.out.println("->Minus");
                 break;
             case '(':
                 context.signStack.push(context.GetCombinedSign());
                 context.currentSign = '+';
-                if(debug) System.out.println("->Opening");
                 ++context.parenthesesLevel;
                 break;
             default:
                 if(context.verbose)
-                    System.out.println("Invalid state transition.");
+                    System.out.println("\nInvalid state transition.");
                 return false;
         }
         ++context.i;
@@ -212,31 +207,27 @@ public class Minusy {
     }
 
     private static boolean Closing(Context context) {
-        if(debug) System.out.println("Closing");
         if(context.i >= context.s.length()) {
             context.state = State.End;
-            if(debug) System.out.println("->End");
             return true;
         }
         switch (context.s.charAt(context.i)) {
             case '-':
                 context.currentSign = '-';
                 context.state = State.Minus;
-                if(debug) System.out.println("->Minus");
                 break;
             case ')':
                 if(context.parenthesesLevel <= 0) {
                     if (context.verbose)
-                        System.out.println("Parentheses closed incorrectly.");
+                        System.out.println("\nParentheses closed incorrectly.");
                     return false;
                 }
                 context.currentSign = context.signStack.pop();
                 --context.parenthesesLevel;
-                if(debug) System.out.println("->Closing");
                 break;
             default:
                 if(context.verbose)
-                    System.out.println("Invalid state transition.");
+                    System.out.println("\nInvalid state transition.");
                 return false;
         }
         ++context.i;
@@ -244,15 +235,14 @@ public class Minusy {
     }
 
     private static boolean End(Context context) {
-        if(debug) System.out.println("End");
         if(context.parenthesesLevel != 0) {
             if (context.verbose)
-                System.out.println("Parentheses not closed correctly.");
+                System.out.println("\nParentheses not closed correctly.");
             return false;
         }
         if(context.n != context.variablesProcessed) {
             if (context.verbose)
-                System.out.println("Not all variables had been taken into account.");
+                System.out.println("\nNot all variables had been taken into account.");
             return false;
         }
         ++context.i;
