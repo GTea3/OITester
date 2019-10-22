@@ -38,7 +38,7 @@ public class Tester {
         //Rozklad, // not implemented
 
         // Programowanie dynamiczne I
-        //Rezerwacja, // not yet available
+        //Rezerwacja, // implemented, not yet available
         //Roznica, // not implemented
         //Zajakniecia, // not implemented
 
@@ -186,9 +186,10 @@ public class Tester {
         Scanner inputContents = new Scanner(new File(input.toString()));
         boolean correctAnswer = false;
         try {
-            correctAnswer = (Boolean) Class.forName("com.samsung.validators." + name).getMethod("validate", Scanner.class, Scanner.class, boolean.class).invoke(null, answer, inputContents, verbose);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-            e.printStackTrace();
+            correctAnswer = (Boolean) Class.forName("com.samsung.validators." + name).getMethod("validate", Scanner.class, Scanner.class).invoke(null, answer, inputContents);
+        } catch (Exception e) {
+            if(verbose)
+                System.out.println("\n" + e.getCause().toString().replace("java.lang.Exception: ", ""));
         }
 
         System.out.println(testName + ": " + (correctAnswer ? "OK" : "wrong answer") + " (" + runTimeMs + "/" + timeLimitMs + "ms)" + (timeLimitExceeded ? " [time limit exceeded]" : ""));

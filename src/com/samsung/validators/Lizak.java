@@ -3,7 +3,7 @@ package com.samsung.validators;
 import java.util.Scanner;
 
 public class Lizak {
-    public static boolean validate(Scanner answer, Scanner input, boolean verbose) {
+    public static boolean validate(Scanner answer, Scanner input) throws Exception {
         int n = input.nextInt();
         int m = input.nextInt();
         String s = input.next(".*(T|W)+");
@@ -18,31 +18,19 @@ public class Lizak {
                 int l = answer.nextInt();
                 int r = answer.nextInt();
                 int rangeValue = a[r] - a[l - 1];
-                if(rangeValue != query) {
-                    if(verbose)
-                        System.out.println("\nSum for range (" + l + ", " + r + ") is equal " + rangeValue + ", not " + query + ".");
-                    return false;
-                }
+                if(rangeValue != query)
+                    throw new Exception("Sum for range (" + l + ", " + r + ") is equal " + rangeValue + ", not " + query + ".");
                 if(answer.hasNextLine()) // get rid of '\n'
                     answer.nextLine();
             }
             else {
-                if(!answer.hasNextLine()) {
-                    if(verbose)
-                        System.out.println("\nNot enough query results.");
-                    return false;
-                }
-                var ss = answer.nextLine();
-                if(!ss.equals("NIE")) {
-                    if(verbose)
-                        System.out.println("\nUnrecognized answer: \"" + ss + "\"");
-                    return false;
-                }
-                if (query <= sum && range[query][0] != NIL) {
-                    if(verbose)
-                        System.out.println("\nReturned \"NIE\" for query with existing answer.");
-                    return false;
-                }
+                if(!answer.hasNextLine())
+                    throw new Exception("Not enough query results.");
+                var stringAnswer = answer.nextLine();
+                if(!stringAnswer.equals("NIE"))
+                    throw new Exception("Unrecognized answer: \"" + stringAnswer + "\"");
+                if (query <= sum && range[query][0] != NIL)
+                    throw new Exception("Returned \"NIE\" for query with existing answer.");
             }
         }
         return true;
