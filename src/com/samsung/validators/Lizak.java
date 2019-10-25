@@ -26,7 +26,7 @@ public class Lizak {
             else {
                 if(!answer.hasNextLine())
                     throw new Exception("Not enough query results.");
-                var stringAnswer = answer.nextLine();
+                String stringAnswer = answer.nextLine();
                 if(!stringAnswer.equals("NIE"))
                     throw new Exception("Unrecognized answer: \"" + stringAnswer + "\"");
                 if (query <= sum && range[query][0] != NIL)

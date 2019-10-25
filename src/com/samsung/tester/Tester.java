@@ -18,7 +18,7 @@ public class Tester {
         Lizak,
         Minusy,
         Trojkaty,
-        Antypierwsze,
+        Antypierwsze, // TODO: correct time limits
 
         // Koszt zamortyzowany
         Krazki,
@@ -208,8 +208,8 @@ public class Tester {
         Scanner correct = new Scanner(new File(output.toString()));
         boolean correctAnswer = true;
         while(answer.hasNext() && correct.hasNext()) {
-            var received = answer.next();
-            var expected = correct.next();
+            String received = answer.next();
+            String expected = correct.next();
             if(!received.equals(expected)) {
                 if(verbose)
                     System.out.println("\nReceived: " + received + "\nExpected: " + expected);
