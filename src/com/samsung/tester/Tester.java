@@ -54,15 +54,15 @@ public class Tester {
         //Zabka, // not implemented
     }
 
-    public static void Test(Tests test, Boolean verbose, Boolean stopOnFirstFail) throws IOException {
+    public static void Test(Tests test, Boolean verbose, Boolean stopOnFirstFail, float timeLimitMultiplier) throws IOException {
         Map<Tests, Consumer<String[]>> tests = GetTests();
         if(test == Tests.All) {
             for (Map.Entry<Tests, Consumer<String[]>> entry : tests.entrySet()) {
-                Tester.Test(entry.getKey().name(), entry.getValue(), verbose, stopOnFirstFail);
+                Tester.Test(entry.getKey().name(), entry.getValue(), verbose, stopOnFirstFail, timeLimitMultiplier);
             }
         }
         else {
-            Tester.Test(test.name(), tests.get(test), verbose, stopOnFirstFail);
+            Tester.Test(test.name(), tests.get(test), verbose, stopOnFirstFail, timeLimitMultiplier);
         }
     }
 
@@ -88,11 +88,7 @@ public class Tester {
         };
     }
 
-    public static void Test(String name, Consumer<String[]> f) throws IOException {
-        Test(name, f, false, true);
-    }
-
-    private static void Test(String name, Consumer<String[]> f, Boolean verbose, Boolean stopOnFirstFail) throws IOException {
+    private static void Test(String name, Consumer<String[]> f, Boolean verbose, Boolean stopOnFirstFail, float timeLimitMultiplier) throws IOException {
         System.out.println(name + "\n" + new String(new char[name.length()]).replace("\0", "-"));
         int correct = 0;
         int total = 0;
@@ -120,7 +116,7 @@ public class Tester {
         for(String inputFile : inputFiles) {
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
-            long timeLimitMs = s.nextInt() * 2;
+            long timeLimitMs = (long)(s.nextInt() * timeLimitMultiplier);
             s.close();
             if(IsCustomValidated(name))
                 correct += Test(f, testName, Paths.get(path.toString(), "in", inputFile), name, timeLimitMs, verbose) ? 1 : 0;
