@@ -15,10 +15,10 @@ public class Tester {
         All,
 
         // Rozgrzewka
-        //Lizak, // implemented, not yet available
-        //Minusy, // implemented, not yet available
+        Lizak,
+        Minusy,
         Trojkaty,
-        Antypierwsze, // not implemented
+        Antypierwsze,
 
         // Koszt zamortyzowany
         Krazki,

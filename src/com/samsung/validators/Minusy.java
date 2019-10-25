@@ -32,9 +32,8 @@ public class Minusy {
             this.input = input;
             this.state = State.Start;
             this.n = input.nextInt();
-            if(!answer.hasNext()) {
+            if(!answer.hasNext())
                 throw new Exception("No answer provided.");
-            }
             this.s = answer.next();
             this.i = 0;
             this.variablesProcessed = 0;
@@ -48,9 +47,8 @@ public class Minusy {
             try {
                 ++this.variablesProcessed;
                 this.requestedSign = input.next("[+-]\\n?").charAt(0);
-            } catch (NoSuchElementException e) {
-                ; // Input ended; this.variablesProcessed should now be equal or greater than this.n.
-            }
+            } catch (NoSuchElementException ignored) {
+            } // Input ended; this.variablesProcessed should now be equal or greater than this.n.
         }
 
         char GetCombinedSign() {
