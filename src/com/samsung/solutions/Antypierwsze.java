@@ -15,10 +15,9 @@ public class Antypierwsze {
     }
 
     private static int generated(int n) {
-        int[] primes = new int[] {1, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29}; // first 11 prime numbers
-        List<Pair<Integer, Integer>> candidates = new ArrayList<Pair<Integer, Integer>>() {
-        };
-        generate(1, 31, 1, 1, primes, n, candidates);
+        int[] primes = new int[] {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}; // first 10 prime numbers
+        List<Pair<Integer, Integer>> candidates = new ArrayList<Pair<Integer, Integer>>();
+        generate(0, 31, 1, 1, primes, n, candidates);
         candidates.sort(Comparator.comparing(Pair<Integer, Integer>::getValue).thenComparing(Pair<Integer, Integer>::getKey));
         Pair<Integer, Integer> best = new Pair<Integer, Integer>(1, 1);
         for(Pair<Integer, Integer> candidate : candidates)
