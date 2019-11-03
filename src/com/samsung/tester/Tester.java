@@ -22,7 +22,7 @@ public class Tester {
 
         // Koszt zamortyzowany
         Krazki,
-        //Browar, // not implemented
+        Browar,
 
         // Stos
         Plakatowanie,
