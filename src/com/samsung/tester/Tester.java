@@ -18,7 +18,7 @@ public class Tester {
         Lizak,
         Minusy,
         Trojkaty,
-        Antypierwsze, // TODO: correct time limits
+        Antypierwsze,
 
         // Koszt zamortyzowany
         Krazki,
@@ -26,7 +26,7 @@ public class Tester {
 
         // Stos
         Plakatowanie,
-        //Tetris, // not implemented
+        Tetris,
 
         // Przeszukiwanie grafow
         //Rownanie, // not implemented
@@ -112,7 +112,6 @@ public class Tester {
         for(String inputFile : inputFiles)
             longestTestNameLength = Math.max(longestTestNameLength, inputFile.length());
         longestTestNameLength -= ".in".length();
-        long startTimeMs = System.currentTimeMillis();
         for(String inputFile : inputFiles) {
             String testName = String.format("%1$-" + (longestTestNameLength + 1) + "s", inputFile.replace(".in", ""));
             Scanner s = new Scanner(new File(Paths.get(path.toString(), "limits", inputFile.replace(".in", ".limit")).toString()));
@@ -126,8 +125,7 @@ public class Tester {
             if(stopOnFirstFail && correct < total)
                 break;
         }
-        long runTimeMs = System.currentTimeMillis() - startTimeMs;
-        String summary = correct + "/" + total + " tests passed (total " +  runTimeMs + "ms)" + (stopOnFirstFail && correct < total ? (", executed " + total + "/" + inputFiles.size() + " tests before first fail") : "");
+        String summary = correct + "/" + total + " tests passed" + (stopOnFirstFail && correct < total ? (", executed " + total + "/" + inputFiles.size() + " tests before first fail") : "");
         System.out.println(new String(new char[summary.length()]).replace("\0", "-"));
         System.out.println(summary + "\n");
     }
