@@ -29,7 +29,7 @@ public class Tester {
         Tetris,
 
         // Przeszukiwanie grafow
-        //Rownanie, // not implemented
+        Rownanie,
         //Jedynki, // not implemented
         //Agenci, // not implemented
 
