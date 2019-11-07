@@ -22,6 +22,7 @@ public class Tester {
 
         // Koszt zamortyzowany
         Krazki,
+        MudstockBis, // prostsza wersja Browaru
         Browar,
 
         // Stos
