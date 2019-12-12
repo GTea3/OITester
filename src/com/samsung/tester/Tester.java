@@ -50,7 +50,7 @@ public class Tester {
 
         // Algorytmy grafowe I
         //Odleglosc, // not implemented
-        //Zawody, // not implemented
+        Zawody,
         //Dziuple, // not implemented
         //Zabka, // not implemented
     }
