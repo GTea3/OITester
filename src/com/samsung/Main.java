@@ -7,7 +7,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         // What tests do you want to run?
-        Tester.Tests test = Tester.Tests.All;
+        Tester.Tests test = Tester.Tests.SWTAKopalnie;
 
         // Do you want to see first received token that did not match expected one?
         Boolean verbose = true;

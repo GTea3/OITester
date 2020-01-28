@@ -53,6 +53,9 @@ public class Tester {
         Zawody,
         //Dziuple, // not implemented
         //Zabka, // not implemented
+
+        // Inne
+        SWTAKopalnie,
     }
 
     public static void Test(Tests test, Boolean verbose, Boolean stopOnFirstFail, float timeLimitMultiplier) throws IOException {
