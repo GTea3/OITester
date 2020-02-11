@@ -15,6 +15,7 @@ public class Main {
         // Do you want to stop testing as soon as a test fails?
         Boolean stopOnFirstFail = true;
 
+//
         // Time limit multiplier (2.0f should be fine for Java)
         float timeLimitMultiplier = 3.0f;
 

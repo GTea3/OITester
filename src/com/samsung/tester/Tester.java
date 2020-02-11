@@ -55,7 +55,18 @@ public class Tester {
         //Zabka, // not implemented
 
         // Inne
+        //SWTAAirplaneGame,
+        //SWTAAutomaticFuelingRobot,
+        //SWTAChristmasDecorationLighting,
         SWTAKopalnie,
+        //SWTANumberComparison,
+        //SWTASamsungBonusPoint,
+        //SWTASamthello,
+        //SWTASamtopia,
+        //SWTASkateRink,
+        //SWTATireInflation,
+        //SWTATrekking,
+        //SWTAWildlandFirefighting
     }
 
     public static void Test(Tests test, Boolean verbose, Boolean stopOnFirstFail, float timeLimitMultiplier) throws IOException {
