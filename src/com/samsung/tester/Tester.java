@@ -39,7 +39,7 @@ public class Tester {
         //Rozklad, // not implemented
 
         // Programowanie dynamiczne I
-        //Rezerwacja, // implemented, not yet available
+        Rezerwacja,
         //Roznica, // not implemented
         //Zajakniecia, // not implemented
 
