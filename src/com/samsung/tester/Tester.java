@@ -64,7 +64,7 @@ public class Tester {
         //SWTASamthello,
         //SWTASamtopia,
         //SWTASkateRink,
-        //SWTATireInflation,
+        SWTATireInflation,
         SWTATrekking,
         SWTAWildlandFirefighting
     }
