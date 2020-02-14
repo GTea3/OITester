@@ -55,7 +55,7 @@ public class Tester {
         //Zabka, // not implemented
 
         // Inne
-        //SWTAAirplaneGame,
+        SWTAAirplaneGame,
         //SWTAAutomaticFuelingRobot,
         //SWTAChristmasDecorationLighting,
         SWTAKopalnie,
