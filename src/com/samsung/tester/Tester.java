@@ -63,7 +63,7 @@ public class Tester {
         //SWTASamsungBonusPoint,
         //SWTASamthello,
         //SWTASamtopia,
-        //SWTASkateRink,
+        SWTASkateRink,
         SWTATireInflation,
         SWTATrekking,
         SWTAWildlandFirefighting
