@@ -57,7 +57,7 @@ public class Tester {
         // Inne
         SWTAAirplaneGame,
         //SWTAAutomaticFuelingRobot,
-        //SWTAChristmasDecorationLighting,
+        SWTAChristmasDecorationLighting,
         SWTAKopalnie,
         //SWTANumberComparison,
         //SWTASamsungBonusPoint,
