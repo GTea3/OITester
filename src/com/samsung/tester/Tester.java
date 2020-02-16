@@ -61,7 +61,7 @@ public class Tester {
         SWTAKopalnie,
         //SWTANumberComparison,
         //SWTASamsungBonusPoint,
-        //SWTASamthello,
+        SWTASamthello,
         //SWTASamtopia,
         SWTASkateRink,
         SWTATireInflation,

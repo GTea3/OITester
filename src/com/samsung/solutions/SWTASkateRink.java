@@ -2,6 +2,10 @@ package com.samsung.solutions;
 
 import java.util.Scanner;
 
+// Maybe it could be optimized a bit to pass last test, but it's NP-Hard.
+// Here's NP-Hardness proof for use-all-segments version based on partitioning problem:
+// https://stackoverflow.com/questions/7294548/construct-the-largest-possible-rectangle-out-of-line-segments-of-given-lengths
+
 public class SWTASkateRink {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
