@@ -60,7 +60,7 @@ public class Tester {
         SWTAChristmasDecorationLighting,
         SWTAKopalnie,
         //SWTANumberComparison,
-        //SWTASamsungBonusPoint,
+        SWTASamsungBonusPoint,
         SWTASamthello,
         SWTASamtopia,
         SWTASkateRink,
