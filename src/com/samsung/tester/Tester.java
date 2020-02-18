@@ -66,7 +66,10 @@ public class Tester {
         SWTASkateRink,
         SWTATireInflation,
         SWTATrekking,
-        SWTAWildlandFirefighting
+        SWTAWildlandFirefighting,
+
+        // Jeszcze inne
+        ComputeExpression,
     }
 
     public static void Test(Tests test, String singleTestName, Boolean verbose, Boolean fullOutput, Boolean stopOnFirstFail, float timeLimitMultiplier) throws IOException {
