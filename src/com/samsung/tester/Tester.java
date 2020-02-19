@@ -56,10 +56,10 @@ public class Tester {
 
         // Inne
         SWTAAirplaneGame,
-        //SWTAAutomaticFuelingRobot,
+        SWTAAutomaticFuelingRobot,
         SWTAChristmasDecorationLighting,
         SWTAKopalnie,
-        //SWTANumberComparison,
+        SWTANumberComparison,
         SWTASamsungBonusPoint,
         SWTASamthello,
         SWTASamtopia,
@@ -189,7 +189,8 @@ public class Tester {
 
     private static void PrintFullOutput(String testName, ByteArrayOutputStream output) {
         System.out.println("\n" + testName + " : output start");
-        System.out.print(output + (output.toString().charAt(output.size() - 1) == '\n' ? "" : "\n"));
+        if(output.size() > 0)
+            System.out.print(output + (output.toString().charAt(output.size() - 1) == '\n' ? "" : "\n"));
         System.out.println("" + testName + " : output end");
     }
 
