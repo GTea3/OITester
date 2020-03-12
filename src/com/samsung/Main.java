@@ -7,7 +7,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         // What tests do you want to run?
-        Tester.Tests test = Tester.Tests.SWTATireInflation;
+        Tester.Tests test = Tester.Tests.SWTAWildlandFirefighting;
 
         // If you want to run just one single test, supply it's name. If not, leave the string empty.
         String singleTestName = "";
